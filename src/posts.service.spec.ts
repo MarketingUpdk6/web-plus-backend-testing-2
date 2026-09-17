@@ -1,4 +1,5 @@
-import { PostsService } from './posts.service';
+import { beforeEach, describe, expect, it } from '@jest/globals';
+import { Post, PostsService } from './posts.service';
 
 describe('PostsService', () => {
   let postsService: PostsService;
@@ -8,6 +9,7 @@ describe('PostsService', () => {
   });
 
   describe('.findMany', () => {
+    let createdPosts: Post[];
     const posts = [
       {text: 'Post 1'},
       {text: 'Post 2'},
@@ -16,17 +18,32 @@ describe('PostsService', () => {
     ];
 
     beforeEach(() => {
-      posts.forEach((post) => postsService.create(post));
+      createdPosts = posts.map((post) => postsService.create(post));
     });
 
     it('should return all posts if called without options', () => {
-      // реализуйте тест-кейс
+      expect(postsService.findMany()).toEqual(createdPosts);
     });
 
     it('should return correct posts for skip and limit options', () => {
-      // реализуйте тест-кейс
+      expect(postsService.findMany({ skip: 1, limit: 2 })).toEqual([
+        createdPosts[1],
+        createdPosts[2],
+      ]);
     });
 
-    // реализуйте недостающие тест-кейсы
+    it('should return correct posts for skip option', () => {
+      expect(postsService.findMany({ skip: 2 })).toEqual([
+        createdPosts[2],
+        createdPosts[3],
+      ]);
+    });
+
+    it('should return correct posts for limit option', () => {
+      expect(postsService.findMany({ limit: 2 })).toEqual([
+        createdPosts[0],
+        createdPosts[1],
+      ]);
+    });
   });
 });
